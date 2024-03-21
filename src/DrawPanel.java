@@ -12,10 +12,12 @@ class DrawPanel extends JPanel implements MouseListener {
     private ArrayList<Card> hand;
     private Rectangle button;
 
+    private ArrayList<Card> deck;
+
     public DrawPanel() {
         button = new Rectangle(162, 240, 160, 26);
         this.addMouseListener(this);
-        hand = Card.buildHand();
+        hand = Deck.buildHand();
     }
 
     protected void paintComponent(Graphics g) {
@@ -49,7 +51,7 @@ class DrawPanel extends JPanel implements MouseListener {
 
         if (e.getButton() == 1) {
             if (button.contains(clicked)) {
-                hand = Card.buildHand();
+                hand = Deck.buildHand();
             }
 
             for (int i = 0; i < hand.size(); i++) {
@@ -65,7 +67,7 @@ class DrawPanel extends JPanel implements MouseListener {
                 Rectangle box = hand.get(i).getCardBox();
                 if (box.contains(clicked)) {
                     hand.get(i).flipHighlight();
-                    Card.replacedCard(hand,i);
+                    Deck.replacedCard(hand,i);
                 }
             }
         }
