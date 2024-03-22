@@ -11,13 +11,15 @@ class DrawPanel extends JPanel implements MouseListener {
 
     private ArrayList<Card> hand;
     private Rectangle button;
-
-    private ArrayList<Card> deck;
+    private Deck deck;
+    private Rectangle replaceButton;
 
     public DrawPanel() {
+        replaceButton = new Rectangle(162, 280, 160, 26);
         button = new Rectangle(162, 240, 160, 26);
         this.addMouseListener(this);
-        hand = Deck.buildHand();
+        deck = new Deck();
+        hand = deck.buildHand();
     }
 
     protected void paintComponent(Graphics g) {
@@ -41,8 +43,19 @@ class DrawPanel extends JPanel implements MouseListener {
             x = x + c.getImage().getWidth() + 30;
         }
         g.setFont(new Font("Courier New", Font.BOLD, 20));
-        g.drawString("GET NEW CARDS", 165, cardHeight*3+40+30);
+        g.drawString("REPLACE CARDS", 165, cardHeight*3+40+30);
         g.drawRect((int)button.getX(), (int)button.getY(), (int)button.getWidth(), (int)button.getHeight());
+        g.drawString("RESTART GAME", 165, cardHeight*3+40+30+40);
+        g.drawRect((int)replaceButton.getX(), (int)replaceButton.getY(), (int)replaceButton.getWidth(), (int)replaceButton.getHeight());
+        if (!deck.isPossible(hand))
+        {
+            g.drawString("GAME OVER! THERE ARE NO OPTIONS LEFT!",10,350);
+        }
+        if(deck.getDeck().size() == 0)
+        {
+            g.drawString("YOU WIN! There are no cards left in the deck",10,350);
+        }
+        g.drawString("Number of Cards Remaining: " + deck.getDeck().size(),10,400);
     }
 
     public void mousePressed(MouseEvent e) {
@@ -50,10 +63,29 @@ class DrawPanel extends JPanel implements MouseListener {
         Point clicked = e.getPoint();
 
         if (e.getButton() == 1) {
-            if (button.contains(clicked)) {
-                hand = Deck.buildHand();
+            if (replaceButton.contains(clicked)) {
+                deck = new Deck();
+                hand = deck.buildHand();
             }
-
+            else if(button.contains(clicked))
+            {
+                ArrayList<Card> selectedCards = new ArrayList<>();
+                for (int i = 0; i < hand.size(); i++) {
+                   if(hand.get(i).getHighlight())
+                   {
+                       selectedCards.add(hand.get(i));
+                   }
+                }
+                if(deck.replaceable(selectedCards))
+                {
+                    for (int i = 0; i < hand.size(); i++) {
+                        if(hand.get(i).getHighlight())
+                        {
+                            deck.replacedCard(hand,i);
+                        }
+                    }
+                }
+            }
             for (int i = 0; i < hand.size(); i++) {
                 Rectangle box = hand.get(i).getCardBox();
                 if (box.contains(clicked)) {
@@ -67,7 +99,6 @@ class DrawPanel extends JPanel implements MouseListener {
                 Rectangle box = hand.get(i).getCardBox();
                 if (box.contains(clicked)) {
                     hand.get(i).flipHighlight();
-                    Deck.replacedCard(hand,i);
                 }
             }
         }
