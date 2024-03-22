@@ -51,12 +51,12 @@ public class Deck {
         if(size>3) return false;
         else if (size == 3)
         {
+            String selectedString = "";
             for(Card selectedCards : selected)
             {
-                int value = parse(selectedCards.getValue());
-                if(value>0) return false;
+                selectedString+=selectedCards.getValue();
             }
-            return true;
+            if(selectedString.contains("Q") && selectedString.contains("J") && selectedString.contains("K")) return true;
         }
         else{
             int count = 0;
@@ -94,13 +94,13 @@ public class Deck {
 
     public boolean isPossible(ArrayList<Card> hand)
     {
-        int countOfIrregular = 0;
+        String irregular = "";
         for(int i = 0; i < hand.size(); i++)
         {
             int value = parse(hand.get(i).getValue());
             if(value<0)
             {
-                countOfIrregular++;
+                irregular+=value;
                 continue;
             }
             for(int a = 0; a < hand.size(); a++)
@@ -112,7 +112,7 @@ public class Deck {
                 if(total==11) return true;
             }
         }
-        if(countOfIrregular >=3) return true;
+        if(irregular.contains("Q") && irregular.contains("K") && irregular.contains("J")) return true;
         return false;
     }
 
